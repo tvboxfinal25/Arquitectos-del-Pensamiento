@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectos del Pensamiento - Filosofía en Párvulos</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #f43f5e;
+            --bg-pastel: #f8fafc;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-pastel);
+            overflow-x: hidden;
+            transition: background 1s ease;
+        }
+
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* 3D Corporate Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+            border-radius: 2rem;
+        }
+
+        .btn-3d {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 0px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.4s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Custom Progress Bar */
+        .progress-bar-container {
+            height: 12px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 999px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Drag & Drop Styles */
+        .drop-zone {
+            min-height: 120px;
+            border: 3px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            transform: scale(1.02);
+        }
+
+        .draggable-item {
+            cursor: grab;
+            user-select: none;
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Avatar Selector */
+        .avatar-option {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .avatar-option:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .avatar-option.selected {
+            border-color: #6366f1;
+            background: #f5f3ff;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2), 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+        .avatar-3d-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top left, #ffffff, #f1f5f9);
+        }
+        .avatar-3d-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .glass-card {
+                border-radius: 1.5rem;
+            }
+        }
+
+        /* Dynamic Background */
+        #dynamic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-icon {
+            position: absolute;
+            font-size: 4rem;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            opacity: 0.15;
+            transition: all 1s ease;
+            animation: float-bg 25s linear infinite;
+            user-select: none;
+        }
+
+        @keyframes float-bg {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            33% { transform: translate(5vw, 5vh) rotate(120deg) scale(1.1); }
+            66% { transform: translate(-5vw, 10vh) rotate(240deg) scale(0.9); }
+            100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Dynamic Background Layer -->
+    <div id="dynamic-bg"></div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div class="glass-card max-w-sm w-full p-8 relative z-10 text-center scale-in">
+            <div id="confirm-icon" class="w-16 h-16 mx-auto bg-indigo-100 rounded-full flex items-center justify-center text-3xl mb-4">❓</div>
+            <h3 id="confirm-title" class="text-xl font-extrabold text-gray-900 mb-2">¿Estás segura?</h3>
+            <p id="confirm-message" class="text-gray-600 mb-8">Esta acción realizará cambios en tu sesión.</p>
+            <div class="flex gap-3">
+                <button id="confirm-cancel" class="flex-1 px-6 py-3 rounded-xl bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition-all">Cancelar</button>
+                <button id="confirm-ok" class="flex-1 px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header / Progress Bar (Visible after login) -->
+    <header id="app-header" class="hidden fixed top-0 left-0 w-full z-50 p-2 sm:p-4">
+        <div class="max-w-4xl mx-auto glass-card p-3 sm:p-4 flex flex-col gap-2 sm:gap-3 shadow-2xl">
+            <!-- Brand Row -->
+            <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end px-2 border-b border-indigo-50 pb-2 mb-1 gap-1 sm:gap-0">
+                <div class="flex flex-col leading-none text-center sm:text-left">
+                    <span class="font-extrabold text-sm sm:text-lg tracking-tight text-indigo-900">
+                        Arquitectos <span class="text-indigo-500">del Pensamiento</span>
+                    </span>
+                </div>
+                <div class="flex flex-col items-center sm:items-end leading-none">
+                    <span class="font-black text-xs sm:text-base tracking-tighter text-indigo-600 italic">
+                        PACE-UDA
+                    </span>
+                    <span class="text-[6px] sm:text-[9px] font-bold tracking-[0.2em] text-indigo-400 uppercase">
+                        ATACAMA / PÁRVULO
+                    </span>
+                </div>
+            </div>
+
+            <!-- User Info Row -->
+            <div class="flex justify-between items-center px-2">
+                <div class="flex items-center gap-3">
+                    <div id="header-avatar" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-2xl shadow-sm border border-gray-100 overflow-hidden">👤</div>
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold shadow-inner text-xs">
+                        <span id="player-level-display">1</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Nivel <span id="level-text">1</span></p>
+                        <p class="text-sm font-bold text-gray-800 truncate max-w-[120px] sm:max-w-none" id="player-name-display"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Experiencia</p>
+                        <p class="text-sm font-bold text-indigo-600"><span id="player-xp-display">0</span> XP</p>
+                    </div>
+                    <button onclick="logout()" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all" title="Cerrar Sesión">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div id="xp-progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main id="app-container" class="flex-grow flex items-center justify-center p-6 mt-32 sm:mt-40 mb-16">
+        
+        <!-- VISTA 1: REGISTRO -->
+        <section id="view-registration" class="w-full max-w-md fade-in">
+            <!-- Brand for Registration -->
+            <div class="flex justify-between items-center mb-8 px-2">
+                <div class="flex flex-col leading-none text-left">
+                    <span class="font-extrabold text-lg tracking-tight text-indigo-900">
+                        Arquitectos <span class="text-indigo-500">del Pensamiento</span>
+                    </span>
+                    <span class="text-[9px] font-bold tracking-[0.1em] text-indigo-400 uppercase mt-1">
+                        Filosofía en Párvulos
+                    </span>
+                </div>
+                <div class="flex flex-col items-end leading-none">
+                    <span class="font-black text-base tracking-tighter text-indigo-600 italic">
+                        PACE-UDA
+                    </span>
+                    <span class="text-[8px] font-bold tracking-[0.2em] text-indigo-400 uppercase">
+                        ATACAMA / PÁRVULO
+                    </span>
+                </div>
+            </div>
+            <div class="glass-card p-8 text-center">
+                <div class="text-6xl mb-6 floating inline-block">🧸</div>
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-2">¡Bienvenida!</h1>
+                <p class="text-gray-500 mb-8">Comienza tu experiencia como Arquitecta del Pensamiento.</p>
+                
+                <div class="space-y-6">
+                    <div class="text-left">
+                        <label class="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 ml-1 text-center">Elige tu Avatar</label>
+                        <div class="grid grid-cols-4 gap-4 mb-8" id="avatar-selector">
+                            <div onclick="selectAvatar('https://api.dicebear.com/7.x/adventurer/svg?seed=Felix', this)" class="avatar-option selected w-16 h-16 mx-auto">
+                                <div class="avatar-3d-container">
+                                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix" alt="Avatar" referrerPolicy="no-referrer">
+                                </div>
+                            </div>
+                            <div onclick="selectAvatar('https://api.dicebear.com/7.x/adventurer/svg?seed=Aneka', this)" class="avatar-option w-16 h-16 mx-auto">
+                                <div class="avatar-3d-container">
+                                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Aneka" alt="Avatar" referrerPolicy="no-referrer">
+                                </div>
+                            </div>
+                            <div onclick="selectAvatar('https://api.dicebear.com/7.x/adventurer/svg?seed=Caleb', this)" class="avatar-option w-16 h-16 mx-auto">
+                                <div class="avatar-3d-container">
+                                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Caleb" alt="Avatar" referrerPolicy="no-referrer">
+                                </div>
+                            </div>
+                            <div onclick="selectAvatar('https://api.dicebear.com/7.x/adventurer/svg?seed=Bella', this)" class="avatar-option w-16 h-16 mx-auto">
+                                <div class="avatar-3d-container">
+                                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Bella" alt="Avatar" referrerPolicy="no-referrer">
+                                </div>
+                            </div>
+                            <div onclick="selectAvatar('https://api.dicebear.com/7.x/adventurer/svg?seed=Daisy', this)" class="avatar-option w-16 h-16 mx-auto">
+                                <div class="avatar-3d-container">
+                                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Daisy" alt="Avatar" referrerPolicy="no-referrer">
+                                </div>
+                            </div>
+                            <div onclick="selectAvatar('https://api.dicebear.com/7.x/adventurer/svg?seed=George', this)" class="avatar-option w-16 h-16 mx-auto">
+                                <div class="avatar-3d-container">
+                                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=George" alt="Avatar" referrerPolicy="no-referrer">
+                                </div>
+                            </div>
+                            <div onclick="selectAvatar('https://api.dicebear.com/7.x/adventurer/svg?seed=Jack', this)" class="avatar-option w-16 h-16 mx-auto">
+                                <div class="avatar-3d-container">
+                                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jack" alt="Avatar" referrerPolicy="no-referrer">
+                                </div>
+                            </div>
+                            <div onclick="selectAvatar('https://api.dicebear.com/7.x/adventurer/svg?seed=Lily', this)" class="avatar-option w-16 h-16 mx-auto">
+                                <div class="avatar-3d-container">
+                                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Lily" alt="Avatar" referrerPolicy="no-referrer">
+                                </div>
+                            </div>
+                        </div>
+
+                        <label class="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Tu Nombre</label>
+                        <input type="text" id="input-name" placeholder="Ej. María González" 
+                            class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-indigo-400 focus:bg-white outline-none transition-all text-lg font-medium shadow-inner">
+                    </div>
+                    
+                    <button onclick="handleLogin()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl text-lg btn-3d transition-all">
+                        Entrar a la Experiencia <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                    
+                    <p class="text-xs text-gray-400 font-medium">Curso: 4° Medio B | Especialidad: Párvulos</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 2: DASHBOARD -->
+        <section id="view-dashboard" class="hidden w-full max-w-4xl fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Left Column: Info -->
+                <div class="md:col-span-2 space-y-6">
+                    <div class="glass-card p-8">
+                        <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Hola, <span id="welcome-name" class="text-indigo-600"></span> 👋</h2>
+                        <div class="flex items-center gap-4 p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+                            <div class="text-3xl">📚</div>
+                            <div>
+                                <p class="text-xs font-bold text-indigo-400 uppercase">Asignatura</p>
+                                <p class="text-lg font-bold text-indigo-900">Filosofía</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <i class="fas fa-bullseye text-rose-500"></i> Objetivo de Aprendizaje
+                            </h3>
+                            <p class="text-gray-600 leading-relaxed italic border-l-4 border-rose-200 pl-4">
+                                "Comprender el rol del educador como <strong>Arquitecto del pensamiento</strong>, formulando preguntas significativas para su quehacer profesional."
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                            <i class="fas fa-medal text-amber-500"></i> Mi Maestría
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            <!-- Skill Bars -->
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold text-gray-400 uppercase mb-2">
+                                        <span>Pensamiento Crítico</span>
+                                        <span id="pc-progress-text">0%</span>
+                                    </div>
+                                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                                        <div id="pc-progress-bar" class="h-full bg-indigo-500 transition-all duration-1000" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold text-gray-400 uppercase mb-2">
+                                        <span>Responsabilidad Social</span>
+                                        <span id="rsi-progress-text">0%</span>
+                                    </div>
+                                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                                        <div id="rsi-progress-bar" class="h-full bg-emerald-500 transition-all duration-1000" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Badges -->
+                            <div class="flex justify-around items-center">
+                                <div id="badge-pc" class="flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-500">
+                                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center text-3xl shadow-inner">🧠</div>
+                                    <span class="text-[10px] font-bold text-indigo-900 text-center">Mente<br>Analítica</span>
+                                </div>
+                                <div id="badge-rsi" class="flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-500">
+                                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-3xl shadow-inner">🤝</div>
+                                    <span class="text-[10px] font-bold text-emerald-900 text-center">Líder<br>Ética</span>
+                                </div>
+                                <div id="badge-master" class="flex flex-col items-center gap-2 opacity-20 grayscale transition-all duration-500">
+                                    <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center text-3xl shadow-inner">🏆</div>
+                                    <span class="text-[10px] font-bold text-amber-900 text-center">Arquitecta<br>Senior</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Contenidos Clave</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div onclick="showContentDetail('autonomia')" class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex flex-col items-center text-center gap-2 hover:scale-105 transition-transform cursor-pointer group">
+                                <span class="text-2xl group-hover:scale-125 transition-transform">⚖️</span>
+                                <span class="text-sm font-bold text-emerald-900">Autonomía Moral</span>
+                            </div>
+                            <div onclick="showContentDetail('convivencia')" class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex flex-col items-center text-center gap-2 hover:scale-105 transition-transform cursor-pointer group">
+                                <span class="text-2xl group-hover:scale-125 transition-transform">🤝</span>
+                                <span class="text-sm font-bold text-blue-900">Convivencia Democrática</span>
+                            </div>
+                            <div onclick="showContentDetail('conciencia')" class="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex flex-col items-center text-center gap-2 hover:scale-105 transition-transform cursor-pointer group">
+                                <span class="text-2xl group-hover:scale-125 transition-transform">🌍</span>
+                                <span class="text-sm font-bold text-amber-900">Conciencia Ecosocial</span>
+                            </div>
+                            <div onclick="showContentDetail('empatia')" class="p-4 bg-purple-50 rounded-2xl border border-purple-100 flex flex-col items-center text-center gap-2 hover:scale-105 transition-transform cursor-pointer group">
+                                <span class="text-2xl group-hover:scale-125 transition-transform">❤️</span>
+                                <span class="text-sm font-bold text-purple-900">Empatía</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Stats & Action -->
+                <div class="space-y-6">
+                    <div class="glass-card p-8 text-center bg-gradient-to-b from-white to-indigo-50">
+                        <div id="dash-avatar" class="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center text-4xl shadow-xl mb-4 border-4 border-indigo-200">
+                            👤
+                        </div>
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-1" id="dash-player-name"></h3>
+                        <p class="text-sm font-bold text-indigo-500 uppercase tracking-widest mb-6">Nivel <span id="dash-level">1</span></p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between text-xs font-bold text-gray-400 uppercase">
+                                <span>Progreso Nivel</span>
+                                <span id="dash-xp-percent">0%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div id="dash-xp-bar" class="progress-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="showView('view-activities')" class="w-full py-6 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-3xl text-xl btn-3d shadow-rose-200">
+                        Ir a las Actividades <i class="fas fa-rocket ml-2"></i>
+                    </button>
+                    
+                    <div class="text-center mt-4 flex flex-col gap-2">
+                        <button onclick="logout()" class="text-indigo-500 hover:text-indigo-700 text-xs font-bold transition-colors">
+                            <i class="fas fa-user-edit mr-1"></i> Cambiar Perfil / Salir
+                        </button>
+                        <button onclick="resetProgress()" class="text-gray-400 hover:text-rose-500 text-[10px] font-bold transition-colors">
+                            <i class="fas fa-redo-alt mr-1"></i> Reiniciar Todo el Progreso
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 3: ACTIVIDADES -->
+        <section id="view-activities" class="hidden w-full max-w-4xl fade-in">
+            <div class="space-y-8">
+                <!-- Header Actividades -->
+                <div class="flex justify-between items-center">
+                    <button onclick="showView('view-dashboard')" class="px-4 py-2 bg-white rounded-xl font-bold text-gray-500 hover:text-indigo-600 transition-colors flex items-center gap-2">
+                        <i class="fas fa-chevron-left"></i> Volver
+                    </button>
+                    <h2 class="text-2xl font-extrabold text-gray-900">Ruta de Aprendizaje</h2>
+                    <div class="w-10"></div>
+                </div>
+
+                <!-- Category Selector -->
+                <div class="flex gap-4 p-2 bg-gray-100/50 rounded-3xl backdrop-blur-sm">
+                    <button id="btn-cat-pc" onclick="switchCategory('pc')" class="flex-1 py-4 px-6 rounded-2xl font-bold transition-all bg-indigo-600 text-white shadow-lg">
+                        <i class="fas fa-brain mr-2"></i> Pensamiento Crítico
+                    </button>
+                    <button id="btn-cat-rsi" onclick="switchCategory('rsi')" class="flex-1 py-4 px-6 rounded-2xl font-bold transition-all bg-white text-gray-500 hover:bg-gray-50">
+                        <i class="fas fa-users mr-2"></i> Responsabilidad Social
+                    </button>
+                </div>
+
+                <!-- CATEGORY: PENSAMIENTO CRÍTICO -->
+                <div id="cat-pc-container" class="space-y-8">
+                    <!-- PC 1: Clasificación -->
+                    <div id="act-pc1-container" class="glass-card p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-2xl floating">🧠</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 1: El Salto de Paradigma</h3>
+                                <p class="text-sm text-gray-500">Clasifica los roles del educador.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <div id="draggable-items" class="space-y-3">
+                                    <div draggable="true" ondragstart="drag(event)" id="item-1" data-type="asistencialismo" class="draggable-item p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:border-indigo-200 transition-all flex items-center gap-3">
+                                        <i class="fas fa-grip-vertical text-gray-300"></i>
+                                        <span class="text-sm font-medium">Cuidador pasivo en guardería</span>
+                                    </div>
+                                    <div draggable="true" ondragstart="drag(event)" id="item-2" data-type="transformacion" class="draggable-item p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:border-indigo-200 transition-all flex items-center gap-3">
+                                        <i class="fas fa-grip-vertical text-gray-300"></i>
+                                        <span class="text-sm font-medium">Arquitecto de entornos</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div id="drop-asistencialismo" ondrop="drop(event)" ondragover="allowDrop(event)" class="drop-zone rounded-3xl flex flex-col gap-2 p-4 items-center justify-center text-gray-300">
+                                    <span class="text-xs font-bold">Asistencialismo</span>
+                                </div>
+                                <div id="drop-transformacion" ondrop="drop(event)" ondragover="allowDrop(event)" class="drop-zone rounded-3xl flex flex-col gap-2 p-4 items-center justify-center text-gray-300">
+                                    <span class="text-xs font-bold">Transformación</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="feedback-pc1" class="hidden mt-6 p-4 rounded-2xl text-sm font-medium border-2 bg-emerald-50 text-emerald-700 border-emerald-100 fade-in">
+                            <div class="flex gap-3">
+                                <span class="text-xl">💡</span>
+                                <div>
+                                    <p class="font-bold mb-1">¡Excelente Clasificación!</p>
+                                    <p class="leading-relaxed">Has identificado correctamente la diferencia entre un enfoque asistencialista (centrado en el cuidado básico) y uno de transformación (donde el educador es un arquitecto de experiencias).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PC 2: Reflexión -->
+                    <div id="act-pc2-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-2xl floating">✍️</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 2: El Reto de Pixie</h3>
+                                <p class="text-sm text-gray-500">Reflexión sobre autonomía moral.</p>
+                            </div>
+                        </div>
+                        <textarea id="pc2-text" rows="3" placeholder="Tu reflexión..." class="w-full p-4 rounded-xl bg-gray-50 border-2 border-transparent focus:border-purple-400 focus:bg-white outline-none transition-all"></textarea>
+                        <button onclick="savePC2()" class="mt-4 px-6 py-2 bg-purple-600 text-white font-bold rounded-xl">Guardar</button>
+                    </div>
+
+                    <!-- PC 3-9: Quizzes -->
+                    <div id="act-pc3-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-2xl floating">🧪</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 3: Epistemología Infantil</h3>
+                                <p class="text-sm text-gray-500">¿Cuál es la principal herramienta del niño?</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, false, 'pc3')" class="quiz-opt-pc3 p-3 text-left bg-white border-2 rounded-xl">A) Repetición</button>
+                            <button onclick="checkQuizNew(this, true, 'pc3')" class="quiz-opt-pc3 p-3 text-left bg-white border-2 rounded-xl">B) Juego espontáneo</button>
+                        </div>
+                    </div>
+
+                    <div id="act-pc4-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-2xl floating">🧩</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 4: Simulador de Mediación</h3>
+                                <p class="text-sm text-gray-500">Un niño llora porque su torre de bloques cayó. ¿Qué haces?</p>
+                            </div>
+                        </div>
+                        <div id="feedback-pc4" class="hidden mb-4 p-4 rounded-xl text-sm font-medium animate-bounce"></div>
+                        <div class="grid gap-3">
+                            <button onclick="checkSkillChallenge(this, true, 'pc4', '¡Excelente! Has provocado que el niño analice la causa del problema.')" class="quiz-opt-pc4 p-4 text-left bg-white border-2 rounded-2xl hover:border-indigo-400 transition-all">
+                                <span class="font-bold block">A) "¿Qué crees que pasó para que se cayera?"</span>
+                                <span class="text-xs text-gray-500">Fomenta el análisis y el pensamiento crítico.</span>
+                            </button>
+                            <button onclick="checkSkillChallenge(this, false, 'pc4', 'Esto detiene el pensamiento. El niño no aprende a resolver el conflicto por sí mismo.')" class="quiz-opt-pc4 p-4 text-left bg-white border-2 rounded-2xl hover:border-rose-400 transition-all">
+                                <span class="font-bold block">B) "No llores, yo te ayudo a armarla de nuevo."</span>
+                                <span class="text-xs text-gray-500">Respuesta asistencialista que limita la autonomía.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="act-pc5-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-2xl floating">🏠</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 5: El Tercer Maestro</h3>
+                                <p class="text-sm text-gray-500">El entorno como agente educativo.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'pc5')" class="quiz-opt-pc5 p-3 text-left bg-white border-2 rounded-xl">A) Estético, provocador y accesible</button>
+                            <button onclick="checkQuizNew(this, false, 'pc5')" class="quiz-opt-pc5 p-3 text-left bg-white border-2 rounded-xl">B) Sobrio y minimalista para evitar distracción</button>
+                        </div>
+                    </div>
+
+                    <div id="act-pc6-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-pink-100 rounded-2xl flex items-center justify-center text-2xl floating">✨</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 6: Lenguaje del Asombro</h3>
+                                <p class="text-sm text-gray-500">Fomentando la indagación.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'pc6')" class="quiz-opt-pc6 p-3 text-left bg-white border-2 rounded-xl">A) Abrir posibilidades de indagación</button>
+                            <button onclick="checkQuizNew(this, false, 'pc6')" class="quiz-opt-pc6 p-3 text-left bg-white border-2 rounded-xl">B) Corregir errores gramaticales</button>
+                        </div>
+                    </div>
+
+                    <div id="act-pc7-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-2xl floating">⭐</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 7: Constructor de Preguntas</h3>
+                                <p class="text-sm text-gray-500">Un niño observa una fila de hormigas. ¿Cuál es tu "Pregunta de Oro"?</p>
+                            </div>
+                        </div>
+                        <div id="feedback-pc7" class="hidden mb-4 p-4 rounded-xl text-sm font-medium animate-bounce"></div>
+                        <div class="grid gap-3">
+                            <button onclick="checkSkillChallenge(this, false, 'pc7', 'Es una pregunta cerrada. Solo evalúa memoria o percepción básica.')" class="quiz-opt-pc7 p-4 text-left bg-white border-2 rounded-2xl hover:border-rose-400 transition-all">
+                                <span class="font-bold block">A) "¿De qué color son las hormigas?"</span>
+                                <span class="text-xs text-gray-500">Pregunta fáctica de bajo nivel cognitivo.</span>
+                            </button>
+                            <button onclick="checkSkillChallenge(this, true, 'pc7', '¡Brillante! Esta pregunta abre un mundo de hipótesis y teorías infantiles.')" class="quiz-opt-pc7 p-4 text-left bg-white border-2 rounded-2xl hover:border-amber-400 transition-all">
+                                <span class="font-bold block">B) "¿Hacia dónde crees que van con tanta prisa?"</span>
+                                <span class="text-xs text-gray-500">Pregunta divergente que activa la imaginación y lógica.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="act-pc8-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-2xl floating">🔄</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 8: Deconstrucción</h3>
+                                <p class="text-sm text-gray-500">Cuestionando las rutinas.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'pc8')" class="quiz-opt-pc8 p-3 text-left bg-white border-2 rounded-xl">A) Cuestionar su sentido pedagógico</button>
+                            <button onclick="checkQuizNew(this, false, 'pc8')" class="quiz-opt-pc8 p-3 text-left bg-white border-2 rounded-xl">B) Eliminarla por completo del horario</button>
+                        </div>
+                    </div>
+
+                    <div id="act-pc9-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-cyan-100 rounded-2xl flex items-center justify-center text-2xl floating">🔍</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 9: Curiosidad Innata</h3>
+                                <p class="text-sm text-gray-500">Materiales y provocaciones.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'pc9')" class="quiz-opt-pc9 p-3 text-left bg-white border-2 rounded-xl">A) Materiales desestructurados (piezas sueltas)</button>
+                            <button onclick="checkQuizNew(this, false, 'pc9')" class="quiz-opt-pc9 p-3 text-left bg-white border-2 rounded-xl">B) Juguetes con una única función clara</button>
+                        </div>
+                    </div>
+
+                    <!-- PC 10: Síntesis -->
+                    <div id="act-pc10-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-2xl floating">📜</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">PC 10: Síntesis del Arquitecto</h3>
+                                <p class="text-sm text-gray-500">Tu visión transformadora.</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4">¿Cómo el pensamiento crítico transforma tu práctica diaria?</p>
+                        <textarea id="pc10-text" rows="3" placeholder="Tu síntesis final..." class="w-full p-4 rounded-xl bg-gray-50 border-2 border-transparent focus:border-indigo-400 focus:bg-white outline-none transition-all"></textarea>
+                        <button onclick="savePC10()" class="mt-4 px-6 py-2 bg-indigo-600 text-white font-bold rounded-xl">Finalizar Categoría</button>
+                    </div>
+                </div>
+
+                <!-- CATEGORY: RESPONSABILIDAD SOCIAL -->
+                <div id="cat-rsi-container" class="hidden space-y-8">
+                    <div id="act-rsi1-container" class="glass-card p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-2xl floating">🤝</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 1: Gestor de Conflictos</h3>
+                                <p class="text-sm text-gray-500">Dos niños quieren el mismo camión. ¿Cómo inicias la asamblea?</p>
+                            </div>
+                        </div>
+                        <div id="feedback-rsi1" class="hidden mb-4 p-4 rounded-xl text-sm font-medium animate-bounce"></div>
+                        <div class="grid gap-3">
+                            <button onclick="checkSkillChallenge(this, false, 'rsi1', 'Esto refuerza la autoridad del adulto y no enseña democracia.')" class="quiz-opt-rsi1 p-4 text-left bg-white border-2 rounded-2xl hover:border-rose-400 transition-all">
+                                <span class="font-bold block">A) "Yo decidiré quién lo usa 5 minutos cada uno."</span>
+                                <span class="text-xs text-gray-500">Resolución externa que anula la participación infantil.</span>
+                            </button>
+                            <button onclick="checkSkillChallenge(this, true, 'rsi1', '¡Correcto! Estás construyendo ciudadanía y responsabilidad social real.')" class="quiz-opt-rsi1 p-4 text-left bg-white border-2 rounded-2xl hover:border-emerald-400 transition-all">
+                                <span class="font-bold block">B) "Sentémonos: ¿Qué solución proponen para este problema?"</span>
+                                <span class="text-xs text-gray-500">Fomenta la autonomía y la búsqueda de acuerdos.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi2-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center text-2xl floating">🍃</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 2: Conciencia Ecosocial</h3>
+                                <p class="text-sm text-gray-500">Cuidado del entorno natural.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'rsi2')" class="quiz-opt-rsi2 p-3 text-left bg-white border-2 rounded-xl">A) Un acto de responsabilidad ecosocial</button>
+                            <button onclick="checkQuizNew(this, false, 'rsi2')" class="quiz-opt-rsi2 p-3 text-left bg-white border-2 rounded-xl">B) Una tarea decorativa secundaria</button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi3-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center text-2xl floating">🛡️</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 3: Ética del Cuidado</h3>
+                                <p class="text-sm text-gray-500">Vulnerabilidad e interdependencia.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'rsi3')" class="quiz-opt-rsi3 p-3 text-left bg-white border-2 rounded-xl">A) Reconocer la vulnerabilidad y la interdependencia</button>
+                            <button onclick="checkQuizNew(this, false, 'rsi3')" class="quiz-opt-rsi3 p-3 text-left bg-white border-2 rounded-xl">B) Vigilar que nadie rompa las reglas</button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi4-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-sky-100 rounded-2xl flex items-center justify-center text-2xl floating">🗣️</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 4: Turno de Palabra</h3>
+                                <p class="text-sm text-gray-500">Respeto por la voz ajena.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'rsi4')" class="quiz-opt-rsi4 p-3 text-left bg-white border-2 rounded-xl">A) Respeto por la voz del otro</button>
+                            <button onclick="checkQuizNew(this, false, 'rsi4')" class="quiz-opt-rsi4 p-3 text-left bg-white border-2 rounded-xl">B) Quién tiene más poder en el grupo</button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi5-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center text-2xl floating">❤️</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 5: Empatía Radical</h3>
+                                <p class="text-sm text-gray-500">Validación emocional.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'rsi5')" class="quiz-opt-rsi5 p-3 text-left bg-white border-2 rounded-xl">A) Validar su emoción y acompañar</button>
+                            <button onclick="checkQuizNew(this, false, 'rsi5')" class="quiz-opt-rsi5 p-3 text-left bg-white border-2 rounded-xl">B) Decirle que "no es para tanto"</button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi6-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center text-2xl floating">👶</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 6: Ciudadanía Temprana</h3>
+                                <p class="text-sm text-gray-500">Sujetos de derechos hoy.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'rsi6')" class="quiz-opt-rsi6 p-3 text-left bg-white border-2 rounded-xl">A) El niño es sujeto de derechos hoy, no mañana</button>
+                            <button onclick="checkQuizNew(this, false, 'rsi6')" class="quiz-opt-rsi6 p-3 text-left bg-white border-2 rounded-xl">B) Enseñar los símbolos patrios temprano</button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi7-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-2xl floating">🧹</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 7: Responsabilidad Compartida</h3>
+                                <p class="text-sm text-gray-500">El orden como bien común.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'rsi7')" class="quiz-opt-rsi7 p-3 text-left bg-white border-2 rounded-xl">A) Toda la comunidad (niños y adultos)</button>
+                            <button onclick="checkQuizNew(this, false, 'rsi7')" class="quiz-opt-rsi7 p-3 text-left bg-white border-2 rounded-xl">B) El personal de aseo exclusivamente</button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi8-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-2xl floating">🌈</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 8: Diseñador de Inclusión</h3>
+                                <p class="text-sm text-gray-500">Un niño con movilidad reducida se integra. ¿Qué cambio es prioritario?</p>
+                            </div>
+                        </div>
+                        <div id="feedback-rsi8" class="hidden mb-4 p-4 rounded-xl text-sm font-medium animate-bounce"></div>
+                        <div class="grid gap-3">
+                            <button onclick="checkSkillChallenge(this, false, 'rsi8', 'Esto es integración física, pero segregación social. No es inclusión real.')" class="quiz-opt-rsi8 p-4 text-left bg-white border-2 rounded-2xl hover:border-rose-400 transition-all">
+                                <span class="font-bold block">A) Asignarle una mesa especial con más espacio.</span>
+                                <span class="text-xs text-gray-500">Crea una diferencia marcada que puede estigmatizar.</span>
+                            </button>
+                            <button onclick="checkSkillChallenge(this, true, 'rsi8', '¡Exacto! La inclusión transforma el entorno para que todos participen por igual.')" class="quiz-opt-rsi8 p-4 text-left bg-white border-2 rounded-2xl hover:border-indigo-400 transition-all">
+                                <span class="font-bold block">B) Reorganizar los estantes para ampliar los pasillos comunes.</span>
+                                <span class="text-xs text-gray-500">Modifica el espacio para garantizar la autonomía de todos.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi9-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-teal-100 rounded-2xl flex items-center justify-center text-2xl floating">👣</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 9: Huella Social</h3>
+                                <p class="text-sm text-gray-500">Impacto de nuestras acciones.</p>
+                            </div>
+                        </div>
+                        <div class="grid gap-2">
+                            <button onclick="checkQuizNew(this, true, 'rsi9')" class="quiz-opt-rsi9 p-3 text-left bg-white border-2 rounded-xl">A) El impacto de mis acciones en los demás</button>
+                            <button onclick="checkQuizNew(this, false, 'rsi9')" class="quiz-opt-rsi9 p-3 text-left bg-white border-2 rounded-xl">B) El registro de asistencia diaria</button>
+                        </div>
+                    </div>
+
+                    <div id="act-rsi10-container" class="glass-card p-8 opacity-50 pointer-events-none transition-all">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-2xl floating">🌍</div>
+                            <div>
+                                <h3 class="text-xl font-extrabold text-gray-900">RSI 10: Manifiesto Social</h3>
+                                <p class="text-sm text-gray-500">Justicia y cuidado.</p>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-4">¿Cómo asegurarás que tu aula sea un espacio de justicia y cuidado?</p>
+                        <textarea id="rsi10-text" rows="3" placeholder="Tu compromiso social..." class="w-full p-4 rounded-xl bg-gray-50 border-2 border-transparent focus:border-emerald-400 focus:bg-white outline-none transition-all"></textarea>
+                        <button onclick="saveRSI10()" class="mt-4 px-6 py-2 bg-emerald-600 text-white font-bold rounded-xl">Finalizar Todo</button>
+                    </div>
+                </div>
+
+                <!-- Finalizar -->
+                <div id="final-container" class="hidden text-center p-8 fade-in">
+                    <div class="text-6xl mb-4">🏆</div>
+                    <h2 class="text-3xl font-extrabold text-gray-900 mb-2">¡Ruta Completada!</h2>
+                    <p class="text-gray-500 mb-8">Has completado las 20 actividades de formación avanzada.</p>
+                    <button onclick="generatePDF()" class="px-10 py-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-3xl text-xl btn-3d shadow-indigo-200">
+                        Generar Informe de Logros <i class="fas fa-file-pdf ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="fixed bottom-0 left-0 w-full p-4 text-center bg-white/50 backdrop-blur-sm border-t border-gray-100 z-40">
+        <p class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
+            Creado por: <span class="text-indigo-600">Christian Núñez</span>, Asesor Pedagógico, Programa PACE-UDA, 2026.
+        </p>
+    </footer>
+
+    <!-- Modal for Content Details -->
+    <div id="content-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm fade-in">
+        <div class="glass-card w-full max-w-lg p-8 relative">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div id="modal-icon" class="text-5xl mb-4 floating inline-block"></div>
+            <h3 id="modal-title" class="text-2xl font-extrabold text-gray-900 mb-4"></h3>
+            <p id="modal-description" class="text-gray-600 leading-relaxed text-lg"></p>
+            <div class="mt-8">
+                <button onclick="closeModal()" class="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl btn-3d">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // --- STATE MANAGEMENT ---
+        let state = {
+            name: '',
+            avatar: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix',
+            course: '4° Medio B',
+            xp: 0,
+            level: 1,
+            startTime: null,
+            endTime: null,
+            badges: {
+                pc: false,
+                rsi: false,
+                master: false
+            },
+            activities: {
+                // Pensamiento Crítico
+                pc1: false, pc2: '', pc3: false, pc4: false, pc5: false,
+                pc6: false, pc7: false, pc8: false, pc9: false, pc10: '',
+                // Responsabilidad Social e Individual
+                rsi1: false, rsi2: false, rsi3: false, rsi4: false, rsi5: false,
+                rsi6: false, rsi7: false, rsi8: false, rsi9: false, rsi10: ''
+            },
+            classificationResults: []
+        };
+
+        const XP_PER_LEVEL = 100;
+        const BACKGROUNDS = [
+            'linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)',
+            'linear-gradient(135deg, #fff5f5 0%, #fff0f0 100%)',
+            'linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%)',
+            'linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%)',
+            'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)',
+            'linear-gradient(135deg, #fffaf0 0%, #fffbe6 100%)',
+            'linear-gradient(135deg, #fff5f7 0%, #ffe4e6 100%)'
+        ];
+
+        function initDynamicBackground() {
+            const bg = document.getElementById('dynamic-bg');
+            const icons = ['👶', '🧸', '🧱', '🎨', '🍼', '🎈', '🪁', '🎠', '🍭', '🍦', '🌈', '☀️', '☁️', '🍎', '🦒', '🐘', '🦁', '🦉'];
+            const count = 18;
+
+            for (let i = 0; i < count; i++) {
+                const icon = document.createElement('div');
+                icon.className = 'bg-icon';
+                icon.innerText = icons[Math.floor(Math.random() * icons.length)];
+                
+                // Random position
+                icon.style.left = Math.random() * 100 + 'vw';
+                icon.style.top = Math.random() * 100 + 'vh';
+                
+                // Random size
+                const size = 3 + Math.random() * 5;
+                icon.style.fontSize = size + 'rem';
+                
+                // Random animation delay and duration
+                icon.style.animationDelay = Math.random() * -25 + 's';
+                icon.style.animationDuration = (20 + Math.random() * 20) + 's';
+                
+                bg.appendChild(icon);
+            }
+        }
+
+        // --- NAVIGATION ---
+        const CONTENT_DETAILS = {
+            autonomia: {
+                title: 'Autonomía Moral',
+                icon: '⚖️',
+                description: 'Capacidad de juzgar y actuar según principios propios, más allá de la obediencia ciega. Es fundamental para que el párvulo desarrolle su propio juicio crítico y tome decisiones éticas conscientes.'
+            },
+            convivencia: {
+                title: 'Convivencia Democrática',
+                icon: '🤝',
+                description: 'Construcción de acuerdos y respeto mutuo en el aula. El educador actúa como mediador para transformar el aula en una comunidad de indagación donde todas las voces son validadas.'
+            },
+            conciencia: {
+                title: 'Conciencia Ecosocial',
+                icon: '🌍',
+                description: 'Entender nuestra interdependencia con el medio ambiente y la sociedad. Fomenta la responsabilidad y el cuidado del entorno desde la primera infancia como un acto de ciudadanía.'
+            },
+            empatia: {
+                title: 'Empatía',
+                icon: '❤️',
+                description: 'Capacidad de validar la perspectiva del otro. Es el motor del diálogo filosófico y la base de una educación humanizadora que reconoce la igualdad radical de inteligencias.'
+            }
+        };
+
+        function showContentDetail(key) {
+            const detail = CONTENT_DETAILS[key];
+            document.getElementById('modal-icon').innerText = detail.icon;
+            document.getElementById('modal-title').innerText = detail.title;
+            document.getElementById('modal-description').innerText = detail.description;
+            
+            const modal = document.getElementById('content-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Re-trigger fade-in
+            modal.classList.remove('fade-in');
+            void modal.offsetWidth;
+            modal.classList.add('fade-in');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('content-modal');
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex', 'fade-out');
+            }, 400);
+        }
+
+        function showView(viewId) {
+            const views = ['view-registration', 'view-dashboard', 'view-activities'];
+            const currentView = views.find(v => !document.getElementById(v).classList.contains('hidden'));
+            
+            if (currentView) {
+                document.getElementById(currentView).classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById(currentView).classList.add('hidden');
+                    document.getElementById(currentView).classList.remove('fade-out');
+                    
+                    const nextView = document.getElementById(viewId);
+                    nextView.classList.remove('hidden');
+                    nextView.classList.add('fade-in');
+                    
+                    // Change background randomly
+                    document.body.style.background = BACKGROUNDS[Math.floor(Math.random() * BACKGROUNDS.length)];
+                }, 400);
+            } else {
+                document.getElementById(viewId).classList.remove('hidden');
+            }
+        }
+
+        function switchCategory(cat) {
+            const pcBtn = document.getElementById('btn-cat-pc');
+            const rsiBtn = document.getElementById('btn-cat-rsi');
+            const pcContainer = document.getElementById('cat-pc-container');
+            const rsiContainer = document.getElementById('cat-rsi-container');
+
+            if (cat === 'pc') {
+                pcBtn.className = "flex-1 py-4 px-6 rounded-2xl font-bold transition-all bg-indigo-600 text-white shadow-lg";
+                rsiBtn.className = "flex-1 py-4 px-6 rounded-2xl font-bold transition-all bg-white text-gray-500 hover:bg-gray-50";
+                pcContainer.classList.remove('hidden');
+                rsiContainer.classList.add('hidden');
+            } else {
+                rsiBtn.className = "flex-1 py-4 px-6 rounded-2xl font-bold transition-all bg-emerald-600 text-white shadow-lg";
+                pcBtn.className = "flex-1 py-4 px-6 rounded-2xl font-bold transition-all bg-white text-gray-500 hover:bg-gray-50";
+                rsiContainer.classList.remove('hidden');
+                pcContainer.classList.add('hidden');
+            }
+        }
+
+        // --- LOGIN LOGIC ---
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-rose-600' : (type === 'success' ? 'bg-emerald-600' : 'bg-indigo-600');
+            toast.className = `fixed bottom-24 left-1/2 -translate-x-1/2 px-6 py-3 ${bgColor} text-white font-bold rounded-full shadow-2xl z-[100] fade-in`;
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        function selectAvatar(url, el) {
+            state.avatar = url;
+            // Remove selected class from all
+            document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+            // Add to current
+            el.classList.add('selected');
+        }
+
+        function showConfirm(title, message, icon, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            document.getElementById('confirm-icon').innerText = icon;
+            
+            modal.classList.remove('hidden');
+            
+            const btnOk = document.getElementById('confirm-ok');
+            const btnCancel = document.getElementById('confirm-cancel');
+            
+            const cleanup = () => {
+                modal.classList.add('hidden');
+                btnOk.onclick = null;
+                btnCancel.onclick = null;
+            };
+            
+            btnOk.onclick = () => {
+                onConfirm();
+                cleanup();
+            };
+            
+            btnCancel.onclick = cleanup;
+        }
+
+        function logout() {
+            showConfirm(
+                '¿Volver al Inicio?', 
+                'Tu progreso se mantendrá guardado, pero volverás a la pantalla de bienvenida.',
+                '👋',
+                () => {
+                    document.getElementById('app-header').classList.add('hidden');
+                    showView('view-registration');
+                }
+            );
+        }
+
+        function updateAvatarUI() {
+            const avatarContainers = ['dash-avatar', 'header-avatar'];
+            avatarContainers.forEach(id => {
+                const container = document.getElementById(id);
+                if (!container) return;
+                
+                if (state.avatar && state.avatar.startsWith('http')) {
+                    container.innerHTML = `<img src="${state.avatar}" class="w-full h-full object-cover rounded-full" alt="Avatar" referrerPolicy="no-referrer">`;
+                    container.classList.remove('text-2xl', 'text-4xl');
+                } else {
+                    container.innerText = state.avatar || '👤';
+                    if (id === 'header-avatar') container.classList.add('text-2xl');
+                    if (id === 'dash-avatar') container.classList.add('text-4xl');
+                }
+            });
+        }
+
+        function handleLogin() {
+            const nameInput = document.getElementById('input-name');
+            if (!nameInput.value.trim()) {
+                showToast('Por favor, ingresa tu nombre.', 'error');
+                return;
+            }
+
+            state.name = nameInput.value.trim();
+            state.startTime = new Date();
+            saveState();
+            
+            // Update UI
+            document.getElementById('player-name-display').innerText = state.name;
+            document.getElementById('welcome-name').innerText = state.name;
+            document.getElementById('dash-player-name').innerText = state.name;
+            updateAvatarUI();
+            document.getElementById('app-header').classList.remove('hidden');
+            
+            showView('view-dashboard');
+            addXP(0); // Initial update
+        }
+
+        // --- GAMIFICATION LOGIC ---
+        function addXP(amount) {
+            state.xp += amount;
+            
+            // Level up logic
+            if (state.xp >= state.level * XP_PER_LEVEL) {
+                state.level++;
+                triggerConfetti();
+                showLevelUpAlert();
+            }
+
+            updateStatsUI();
+            saveState();
+        }
+
+        function updateStatsUI() {
+            const currentLevelXP = state.xp % XP_PER_LEVEL;
+            const percent = (currentLevelXP / XP_PER_LEVEL) * 100;
+
+            document.getElementById('player-xp-display').innerText = state.xp;
+            document.getElementById('player-level-display').innerText = state.level;
+            document.getElementById('level-text').innerText = state.level;
+            document.getElementById('xp-progress-bar').style.width = `${percent}%`;
+            
+            document.getElementById('dash-level').innerText = state.level;
+            document.getElementById('dash-xp-percent').innerText = `${Math.round(percent)}%`;
+            document.getElementById('dash-xp-bar').style.width = `${percent}%`;
+
+            // Update Mastery UI
+            const pcCompleted = Object.keys(state.activities).filter(k => k.startsWith('pc') && state.activities[k]).length;
+            const rsiCompleted = Object.keys(state.activities).filter(k => k.startsWith('rsi') && state.activities[k]).length;
+            
+            const pcPercent = (pcCompleted / 10) * 100;
+            const rsiPercent = (rsiCompleted / 10) * 100;
+
+            document.getElementById('pc-progress-bar').style.width = `${pcPercent}%`;
+            document.getElementById('pc-progress-text').innerText = `${Math.round(pcPercent)}%`;
+            document.getElementById('rsi-progress-bar').style.width = `${rsiPercent}%`;
+            document.getElementById('rsi-progress-text').innerText = `${Math.round(rsiPercent)}%`;
+
+            // Badges Logic
+            if (pcPercent === 100 && !state.badges.pc) {
+                state.badges.pc = true;
+                showBadgeUnlock('Mente Analítica', '🧠');
+            }
+            if (rsiPercent === 100 && !state.badges.rsi) {
+                state.badges.rsi = true;
+                showBadgeUnlock('Líder Ética', '🤝');
+            }
+            if (pcPercent === 100 && rsiPercent === 100 && !state.badges.master) {
+                state.badges.master = true;
+                showBadgeUnlock('Arquitecta Senior', '🏆');
+            }
+
+            // Update Badge Visuals
+            if (state.badges.pc) {
+                document.getElementById('badge-pc').classList.remove('opacity-20', 'grayscale');
+                document.getElementById('badge-pc').classList.add('scale-110', 'animate-pulse');
+            }
+            if (state.badges.rsi) {
+                document.getElementById('badge-rsi').classList.remove('opacity-20', 'grayscale');
+                document.getElementById('badge-rsi').classList.add('scale-110', 'animate-pulse');
+            }
+            if (state.badges.master) {
+                document.getElementById('badge-master').classList.remove('opacity-20', 'grayscale');
+                document.getElementById('badge-master').classList.add('scale-110', 'animate-pulse');
+            }
+        }
+
+        function showBadgeUnlock(name, icon) {
+            triggerConfetti();
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 glass-card p-10 bg-gradient-to-br from-indigo-600 to-purple-700 text-white text-center z-[200] fade-in shadow-2xl border-4 border-white/30 scale-110';
+            toast.innerHTML = `
+                <div class="text-6xl mb-6 animate-bounce">${icon}</div>
+                <h2 class="text-3xl font-black mb-2 uppercase tracking-tighter">¡Insignia Desbloqueada!</h2>
+                <p class="text-xl font-bold text-indigo-100 mb-6">Has obtenido la maestría: <br><span class="text-yellow-300">"${name}"</span></p>
+                <button onclick="this.parentElement.remove()" class="px-8 py-3 bg-white text-indigo-600 font-black rounded-full hover:bg-indigo-50 transition-colors shadow-lg">¡GENIAL!</button>
+            `;
+            document.body.appendChild(toast);
+        }
+
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#6366f1', '#a855f7', '#f43f5e']
+            });
+        }
+
+        function showLevelUpAlert() {
+            const alert = document.createElement('div');
+            alert.className = 'fixed top-24 left-1/2 -translate-x-1/2 glass-card px-8 py-4 bg-indigo-600 text-white font-bold z-[100] fade-in shadow-2xl border-indigo-400';
+            alert.innerHTML = `<i class="fas fa-star mr-2 text-yellow-300"></i> ¡NIVEL ${state.level} ALCANZADO!`;
+            document.body.appendChild(alert);
+            setTimeout(() => {
+                alert.classList.add('fade-out');
+                setTimeout(() => alert.remove(), 500);
+            }, 3000);
+        }
+
+        // --- ACTIVITY 1: DRAG & DROP ---
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+            ev.dataTransfer.setData("type", ev.target.dataset.type);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const zone = ev.currentTarget;
+            zone.classList.remove('drag-over');
+            
+            const itemId = ev.dataTransfer.getData("text");
+            const itemType = ev.dataTransfer.getData("type");
+            const zoneType = zone.id.replace('drop-', '');
+            
+            const item = document.getElementById(itemId);
+            
+            if (itemType === zoneType) {
+                zone.appendChild(item);
+                item.classList.remove('bg-white');
+                item.classList.add('bg-emerald-50', 'border-emerald-200');
+                item.setAttribute('draggable', 'false');
+                addXP(25);
+                
+                state.classificationResults.push({
+                    item: item.innerText.trim(),
+                    category: zoneType,
+                    correct: true
+                });
+
+                checkAct1Completion();
+            } else {
+                item.classList.add('shake');
+                setTimeout(() => item.classList.remove('shake'), 500);
+                
+                // Formative feedback for wrong drop
+                const feedbackMsg = document.createElement('div');
+                feedbackMsg.className = "fixed bottom-24 left-1/2 -translate-x-1/2 px-6 py-3 bg-rose-600 text-white font-bold rounded-full shadow-2xl z-50 fade-in";
+                feedbackMsg.innerText = "🧐 Recuerda: El asistencialismo es pasivo, la transformación es activa.";
+                document.body.appendChild(feedbackMsg);
+                setTimeout(() => feedbackMsg.remove(), 3000);
+            }
+        }
+
+        function checkAct1Completion() {
+            const remaining = document.getElementById('draggable-items').children.length;
+            if (remaining === 0) {
+                state.activities.pc1 = true;
+                saveState();
+                document.getElementById('feedback-pc1').classList.remove('hidden');
+                document.getElementById('act-pc1-container').classList.add('border-2', 'border-emerald-400');
+                document.getElementById('act-pc2-container').classList.remove('opacity-50', 'pointer-events-none');
+                triggerConfetti();
+            }
+        }
+
+        // --- ACTIVITY HANDLERS ---
+        function savePC2() {
+            console.log("Saving PC2...");
+            const textEl = document.getElementById('pc2-text');
+            if (!textEl) {
+                console.error("pc2-text not found");
+                return;
+            }
+            const text = textEl.value.trim();
+            if (text.length < 10) {
+                showToast('Por favor, profundiza un poco más en tu reflexión.', 'error');
+                return;
+            }
+            
+            state.activities.pc2 = text;
+            addXP(50);
+            saveState();
+            
+            // Formative feedback
+            const feedbackEl = document.createElement('div');
+            feedbackEl.className = "mt-4 p-4 rounded-2xl text-sm font-medium border-2 bg-purple-50 text-purple-700 border-purple-100 fade-in";
+            feedbackEl.innerHTML = `<div class="flex gap-3">
+                <span class="text-xl">💡</span>
+                <div>
+                    <p class="font-bold mb-1">Reflexión Registrada</p>
+                    <p class="leading-relaxed">La autonomía moral no es solo hacer lo que uno quiere, sino actuar bajo principios éticos que uno mismo ha validado. ¡Excelente inicio!</p>
+                </div>
+            </div>`;
+            
+            const container = document.getElementById('act-pc2-container');
+            if (container) {
+                container.appendChild(feedbackEl);
+                container.classList.add('border-2', 'border-purple-400');
+            }
+            
+            const nextContainer = document.getElementById('act-pc3-container');
+            if (nextContainer) {
+                nextContainer.classList.remove('opacity-50', 'pointer-events-none');
+                nextContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                console.error("act-pc3-container not found");
+            }
+            
+            triggerConfetti();
+            showToast('¡Reflexión guardada con éxito!', 'success');
+        }
+
+        function checkSkillChallenge(btn, isCorrect, id, feedback) {
+            const feedbackEl = document.getElementById(`feedback-${id}`);
+            feedbackEl.innerText = feedback;
+            feedbackEl.classList.remove('hidden');
+            
+            if (isCorrect) {
+                feedbackEl.className = "mb-4 p-4 rounded-xl text-sm font-bold bg-emerald-100 text-emerald-700 animate-bounce";
+                checkQuizNew(btn, true, id);
+            } else {
+                feedbackEl.className = "mb-4 p-4 rounded-xl text-sm font-bold bg-rose-100 text-rose-700 shake";
+                btn.classList.add('bg-rose-50', 'border-rose-200');
+                setTimeout(() => {
+                    btn.classList.remove('bg-rose-50', 'border-rose-200');
+                }, 2000);
+            }
+        }
+
+        function checkQuizNew(btn, isCorrect, id) {
+            console.log(`Checking Quiz: ${id}, Correct: ${isCorrect}`);
+            const opts = document.querySelectorAll(`.quiz-opt-${id}`);
+            opts.forEach(o => o.classList.add('pointer-events-none', 'opacity-50'));
+            
+            // Formative Feedback Logic (Pedagogical Reinforcement)
+            const feedbackMap = {
+                'pc3': isCorrect 
+                    ? '¡Correcto! El juego espontáneo es la base de la construcción del conocimiento en la infancia. A través de él, el niño formula hipótesis y experimenta con el mundo.' 
+                    : 'La repetición es un proceso mecánico. El juego espontáneo, en cambio, es la herramienta epistemológica por excelencia del párvulo.',
+                'pc5': isCorrect 
+                    ? '¡Exacto! El ambiente es el "tercer educador". Un espacio bien diseñado provoca curiosidad y ofrece múltiples posibilidades de acción sin necesidad de intervención constante.' 
+                    : 'Aunque el docente es clave, un ambiente sobrio o vacío limita las oportunidades de aprendizaje autónomo y asombro.',
+                'pc6': isCorrect 
+                    ? '¡Así es! El lenguaje del asombro permite que el niño se conecte con lo desconocido. Fomentar este lenguaje es validar su capacidad de maravillarse.' 
+                    : 'El lenguaje técnico o gramatical es importante, pero en la infancia, el asombro es el motor que impulsa toda indagación profunda.',
+                'pc8': isCorrect 
+                    ? '¡Bien! Cuestionar lo cotidiano permite transformar rutinas vacías en experiencias con sentido pedagógico. Es la esencia del pensamiento crítico docente.' 
+                    : 'Eliminar rutinas no es la solución; el reto es deconstruirlas para encontrar su valor educativo y transformarlas.',
+                'pc9': isCorrect 
+                    ? '¡Excelente! Los materiales no estructurados (piezas sueltas) invitan a la creatividad infinita porque no tienen una función única predefinida.' 
+                    : 'Los juguetes con una sola función (cerrados) limitan la imaginación, ya que el niño solo puede hacer lo que el juguete le permite.',
+                'rsi2': isCorrect 
+                    ? '¡Muy bien! El cuidado de seres vivos (plantas/animales) desarrolla la empatía ambiental y la conciencia de nuestra interdependencia con el ecosistema.' 
+                    : 'Las plantas artificiales no ofrecen la experiencia de cuidado, responsabilidad y observación del ciclo de la vida.',
+                'rsi3': isCorrect 
+                    ? '¡Correcto! La ética del cuidado reconoce que todos somos vulnerables y necesitamos de los demás. Es la base de una sociedad solidaria.' 
+                    : 'La vigilancia es una forma de control. La ética del cuidado se basa en la responsabilidad mutua y el reconocimiento del otro.',
+                'rsi4': isCorrect 
+                    ? '¡Exacto! El respeto por la voz del otro es el pilar de la democracia. En el aula, esto significa validar cada opinión como valiosa.' 
+                    : 'La democracia no se trata de quién tiene más poder, sino de cómo construimos acuerdos respetando la diversidad de voces.',
+                'rsi5': isCorrect 
+                    ? '¡Bien! Validar la emoción ("Entiendo que estés triste") ayuda al niño a regularse. Minimizarla solo genera confusión y desconexión emocional.' 
+                    : 'Decir "no es para tanto" invalida la experiencia subjetiva del niño y dificulta su proceso de aprendizaje emocional.',
+                'rsi6': isCorrect 
+                    ? '¡Así es! Los niños son ciudadanos del presente, no del futuro. Tienen derecho a participar y opinar sobre los temas que les afectan.' 
+                    : 'La ciudadanía no es algo que se adquiere al crecer; se ejerce desde la cuna a través de la participación activa en su comunidad.',
+                'rsi7': isCorrect 
+                    ? '¡Excelente! Involucrar a los niños en el orden del aula fomenta el sentido de pertenencia y la responsabilidad compartida sobre el espacio común.' 
+                    : 'Si el adulto siempre ordena, el niño no desarrolla la conciencia de que el aula es un espacio que le pertenece y que debe cuidar.',
+                'rsi9': isCorrect 
+                    ? '¡Bien! La huella ética es la conciencia de que cada una de nuestras acciones impacta en el bienestar de los demás y del entorno.' 
+                    : 'La huella no es un registro administrativo, es un compromiso ético con las consecuencias de nuestro comportamiento.'
+            };
+
+            if (feedbackMap[id]) {
+                const feedbackEl = document.createElement('div');
+                feedbackEl.className = `mt-4 p-4 rounded-2xl text-sm font-medium border-2 ${isCorrect ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-100'} fade-in`;
+                feedbackEl.innerHTML = `<div class="flex gap-3">
+                    <span class="text-xl">${isCorrect ? '💡' : '🧐'}</span>
+                    <div>
+                        <p class="font-bold mb-1">${isCorrect ? 'Refuerzo Positivo' : 'Reflexión Pedagógica'}</p>
+                        <p class="leading-relaxed">${feedbackMap[id]}</p>
+                    </div>
+                </div>`;
+                btn.parentElement.appendChild(feedbackEl);
+            }
+            
+            if (isCorrect) {
+                btn.classList.remove('opacity-50');
+                btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                addXP(30);
+                state.activities[id] = true;
+                saveState();
+                
+                // Unlock next logic
+                let nextId = '';
+                if (id.startsWith('pc')) {
+                    const num = parseInt(id.replace('pc', ''));
+                    if (num < 10) nextId = `pc${num + 1}`;
+                } else {
+                    const num = parseInt(id.replace('rsi', ''));
+                    if (num < 10) nextId = `rsi${num + 1}`;
+                }
+
+                if (nextId) {
+                    const nextContainer = document.getElementById(`act-${nextId}-container`);
+                    if (nextContainer) {
+                        nextContainer.classList.remove('opacity-50', 'pointer-events-none');
+                        nextContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+                
+                const currentContainer = document.getElementById(`act-${id}-container`);
+                if (currentContainer) {
+                    currentContainer.classList.add('border-2', 'border-emerald-400');
+                }
+                triggerConfetti();
+                showToast('¡Respuesta correcta!', 'success');
+            } else {
+                btn.classList.remove('opacity-50');
+                btn.classList.add('bg-rose-500', 'text-white', 'border-rose-600');
+                showToast('Inténtalo de nuevo.', 'error');
+                setTimeout(() => {
+                    opts.forEach(o => o.classList.remove('pointer-events-none', 'opacity-50', 'bg-rose-500', 'text-white', 'border-rose-600'));
+                }, 1500);
+            }
+        }
+
+        function savePC10() {
+            const text = document.getElementById('pc10-text').value.trim();
+            if (text.length < 10) {
+                showToast('Por favor, completa tu síntesis.', 'error');
+                return;
+            }
+            state.activities.pc10 = text;
+            addXP(100);
+            saveState();
+            
+            // Formative feedback
+            const feedbackEl = document.createElement('div');
+            feedbackEl.className = "mt-4 p-4 rounded-2xl text-sm font-medium border-2 bg-indigo-50 text-indigo-700 border-indigo-100 fade-in";
+            feedbackEl.innerHTML = `<div class="flex gap-3">
+                <span class="text-xl">🏆</span>
+                <div>
+                    <p class="font-bold mb-1">Síntesis Finalizada</p>
+                    <p class="leading-relaxed">Has integrado los conceptos de mediación, asombro y arquitectura de entornos. Estás lista para transformar tu práctica pedagógica.</p>
+                </div>
+            </div>`;
+            document.getElementById('act-pc10-container').appendChild(feedbackEl);
+
+            document.getElementById('act-pc10-container').classList.add('border-2', 'border-indigo-400');
+            showToast('¡Categoría de Pensamiento Crítico completada!', 'success');
+            setTimeout(() => switchCategory('rsi'), 2000);
+            triggerConfetti();
+        }
+
+        function saveRSI10() {
+            const text = document.getElementById('rsi10-text').value.trim();
+            if (text.length < 10) {
+                showToast('Por favor, completa tu compromiso.', 'error');
+                return;
+            }
+            state.activities.rsi10 = text;
+            state.endTime = new Date();
+            addXP(150);
+            saveState();
+            
+            // Formative feedback
+            const feedbackEl = document.createElement('div');
+            feedbackEl.className = "mt-4 p-4 rounded-2xl text-sm font-medium border-2 bg-emerald-50 text-emerald-700 border-emerald-100 fade-in";
+            feedbackEl.innerHTML = `<div class="flex gap-3">
+                <span class="text-xl">🌍</span>
+                <div>
+                    <p class="font-bold mb-1">Compromiso Sellado</p>
+                    <p class="leading-relaxed">La justicia y el cuidado no son solo ideales, son acciones diarias. Tu compromiso es el motor de una nueva ciudadanía desde la cuna.</p>
+                </div>
+            </div>`;
+            document.getElementById('act-rsi10-container').appendChild(feedbackEl);
+
+            document.getElementById('act-rsi10-container').classList.add('border-2', 'border-emerald-400');
+            document.getElementById('final-container').classList.remove('hidden');
+            document.getElementById('final-container').scrollIntoView({ behavior: 'smooth' });
+            triggerConfetti();
+        }
+
+        // --- PERSISTENCE ---
+        function saveState() {
+            localStorage.setItem('arquitectos_state', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('arquitectos_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                Object.assign(state, parsed);
+                
+                // Convert date strings back to Date objects
+                if (state.startTime) state.startTime = new Date(state.startTime);
+                if (state.endTime) state.endTime = new Date(state.endTime);
+                
+                // Restore UI if logged in
+                if (state.name) {
+                    document.getElementById('player-name-display').innerText = state.name;
+                    document.getElementById('welcome-name').innerText = state.name;
+                    document.getElementById('dash-player-name').innerText = state.name;
+                    updateAvatarUI();
+                    document.getElementById('app-header').classList.remove('hidden');
+                    updateStatsUI();
+                    restoreProgressUI();
+                    showView('view-dashboard');
+                }
+            }
+        }
+
+        function restoreProgressUI() {
+            console.log("Restoring Progress UI...");
+            
+            // Restore textareas
+            if (state.activities.pc2) document.getElementById('pc2-text').value = state.activities.pc2;
+            if (state.activities.pc10) document.getElementById('pc10-text').value = state.activities.pc10;
+            if (state.activities.rsi10) document.getElementById('rsi10-text').value = state.activities.rsi10;
+
+            // Unlock activities based on state
+            Object.keys(state.activities).forEach(id => {
+                const isCompleted = !!state.activities[id];
+                if (isCompleted) {
+                    const container = document.getElementById(`act-${id}-container`);
+                    if (container) {
+                        container.classList.remove('opacity-50', 'pointer-events-none');
+                        container.classList.add('border-2', 'border-emerald-400');
+                        
+                        // Unlock next one
+                        let nextId = '';
+                        if (id.startsWith('pc')) {
+                            const num = parseInt(id.replace('pc', ''));
+                            if (num < 10) nextId = `pc${num + 1}`;
+                        } else {
+                            const num = parseInt(id.replace('rsi', ''));
+                            if (num < 10) nextId = `rsi${num + 1}`;
+                        }
+                        
+                        if (nextId) {
+                            const nextContainer = document.getElementById(`act-${nextId}-container`);
+                            if (nextContainer) {
+                                nextContainer.classList.remove('opacity-50', 'pointer-events-none');
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Special case for PC10 completion unlocking RSI1
+            if (state.activities.pc10) {
+                document.getElementById('act-rsi1-container').classList.remove('opacity-50', 'pointer-events-none');
+            }
+            
+            // If all done, show final container
+            if (state.activities.rsi10) {
+                document.getElementById('final-container').classList.remove('hidden');
+            }
+        }
+
+        function resetProgress() {
+            showConfirm(
+                '¿Reiniciar Todo?', 
+                'Esta acción borrará permanentemente todo tu progreso y XP. No se puede deshacer.',
+                '⚠️',
+                () => {
+                    localStorage.removeItem('arquitectos_state');
+                    location.reload();
+                }
+            );
+        }
+
+        // Initialize
+        window.onload = () => {
+            loadState();
+            initDynamicBackground();
+        };
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const totalTime = Math.round((state.endTime - state.startTime) / 1000 / 60);
+            const dateStr = new Date().toLocaleDateString();
+
+            // Header
+            doc.setFillColor(99, 102, 241);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.text("Informe de Logros: Arquitectos del Pensamiento", 15, 25);
+            doc.setFontSize(10);
+            doc.text(`Fecha: ${dateStr}`, 15, 33);
+
+            // User Data
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(14);
+            doc.text("Datos del Estudiante", 15, 55);
+            
+            doc.autoTable({
+                startY: 60,
+                head: [['Campo', 'Información']],
+                body: [
+                    ['Nombre', state.name],
+                    ['Curso', state.course],
+                    ['Tiempo Total', `${totalTime} minutos`],
+                    ['Nivel Alcanzado', state.level],
+                    ['XP Total', state.xp]
+                ],
+                theme: 'striped',
+                headStyles: { fillColor: [99, 102, 241] }
+            });
+
+            let currentY = doc.lastAutoTable.finalY + 15;
+
+            // Activities Table
+            doc.setFontSize(14);
+            doc.text("Resultados de Actividades", 15, currentY);
+            
+            const activityData = [
+                ['PC 1: Clasificación', state.activities.pc1 ? 'Completado' : 'Pendiente'],
+                ['PC 2: Reflexión', state.activities.pc2 ? 'Realizada' : 'Pendiente'],
+                ['PC 3: Quiz', state.activities.pc3 ? 'Aprobado' : 'Pendiente'],
+                ['PC 4: Mediación', state.activities.pc4 ? 'Aprobado' : 'Pendiente'],
+                ['PC 5: Entorno', state.activities.pc5 ? 'Aprobado' : 'Pendiente'],
+                ['PC 6: Lenguaje', state.activities.pc6 ? 'Aprobado' : 'Pendiente'],
+                ['PC 7: Pregunta', state.activities.pc7 ? 'Aprobado' : 'Pendiente'],
+                ['PC 8: Rutinas', state.activities.pc8 ? 'Aprobado' : 'Pendiente'],
+                ['PC 9: Curiosidad', state.activities.pc9 ? 'Aprobado' : 'Pendiente'],
+                ['PC 10: Síntesis', state.activities.pc10 ? 'Realizada' : 'Pendiente'],
+                ['RSI 1: Asamblea', state.activities.rsi1 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 2: Ecosocial', state.activities.rsi2 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 3: Ética', state.activities.rsi3 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 4: Turno', state.activities.rsi4 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 5: Empatía', state.activities.rsi5 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 6: Ciudadanía', state.activities.rsi6 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 7: Orden', state.activities.rsi7 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 8: Inclusión', state.activities.rsi8 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 9: Huella', state.activities.rsi9 ? 'Aprobado' : 'Pendiente'],
+                ['RSI 10: Compromiso', state.activities.rsi10 ? 'Realizada' : 'Pendiente']
+            ];
+
+            doc.autoTable({
+                startY: currentY + 5,
+                head: [['Actividad', 'Estado']],
+                body: activityData,
+                theme: 'grid',
+                headStyles: { fillColor: [244, 63, 94] }
+            });
+
+            currentY = doc.lastAutoTable.finalY + 15;
+
+            doc.setFontSize(14);
+            doc.text("Insignias de Maestría Alcanzadas", 15, currentY);
+            let badgesEarned = [];
+            if (state.badges.pc) badgesEarned.push("Mente Analítica (Pensamiento Crítico)");
+            if (state.badges.rsi) badgesEarned.push("Líder Ética (Responsabilidad Social)");
+            if (state.badges.master) badgesEarned.push("Arquitecta Senior (Maestría Total)");
+            
+            if (badgesEarned.length > 0) {
+                doc.setFontSize(10);
+                badgesEarned.forEach((b, i) => {
+                    doc.text(`- ${b}`, 20, currentY + 7 + (i * 6));
+                });
+                currentY += 10 + (badgesEarned.length * 6);
+            } else {
+                doc.setFontSize(10);
+                doc.text("Aún no se han obtenido insignias de maestría.", 20, currentY + 7);
+                currentY += 15;
+            }
+
+            // Reflection Text
+            if (state.activities.pc2) {
+                if (currentY > 250) { doc.addPage(); currentY = 20; }
+                doc.setFontSize(14);
+                doc.text("Reflexión Profesional (PC 2)", 15, currentY);
+                doc.setFontSize(10);
+                const splitText = doc.splitTextToSize(state.activities.pc2, 180);
+                doc.text(splitText, 15, currentY + 7);
+                currentY += 15 + (splitText.length * 5);
+            }
+
+            // Synthesis Text
+            if (state.activities.pc10) {
+                if (currentY > 250) { doc.addPage(); currentY = 20; }
+                doc.setFontSize(14);
+                doc.text("Síntesis Pensamiento Crítico (PC 10)", 15, currentY);
+                doc.setFontSize(10);
+                const splitPC10 = doc.splitTextToSize(state.activities.pc10, 180);
+                doc.text(splitPC10, 15, currentY + 7);
+                currentY += 15 + (splitPC10.length * 5);
+            }
+
+            // Commitment Text
+            if (state.activities.rsi10) {
+                if (currentY > 250) { doc.addPage(); currentY = 20; }
+                doc.setFontSize(14);
+                doc.text("Compromiso Social (RSI 10)", 15, currentY);
+                doc.setFontSize(10);
+                const splitRSI10 = doc.splitTextToSize(state.activities.rsi10, 180);
+                doc.text(splitRSI10, 15, currentY + 7);
+            }
+
+            // Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text(
+                    "Creado por: Christian Núñez, Asesor Pedagógico, Programa PACE-UDA, 2026.",
+                    105, 285, { align: 'center' }
+                );
+            }
+
+            doc.save(`Informe_Logros_${state.name.replace(/\s+/g, '_')}.pdf`);
+        }
+
+        // Initialize background
+        document.body.style.background = BACKGROUNDS[0];
+    </script>
+</body>
+</html>
