@@ -14,7 +14,7 @@
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&family=Lexend:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -22,13 +22,58 @@
             --secondary: #a855f7;
             --accent: #f43f5e;
             --bg-pastel: #f8fafc;
+            --font-main: 'Outfit', sans-serif;
+            --font-dyslexic: 'Lexend', sans-serif;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
+            font-family: var(--font-main);
             background-color: var(--bg-pastel);
             overflow-x: hidden;
             transition: background 1s ease;
+        }
+
+        .font-dyslexic {
+            font-family: var(--font-dyslexic) !important;
+            letter-spacing: 0.03em;
+            word-spacing: 0.1em;
+        }
+
+        /* High Contrast Mode */
+        .high-contrast {
+            --primary: #0000ff;
+            --secondary: #0000ff;
+            --accent: #ff0000;
+            filter: contrast(1.2);
+        }
+        
+        .high-contrast body {
+            background: #ffffff !important;
+        }
+        
+        .high-contrast .glass-card {
+            background: #ffffff !important;
+            border: 3px solid #000000 !important;
+            box-shadow: none !important;
+        }
+
+        .high-contrast p, .high-contrast h1, .high-contrast h2, .high-contrast h3, .high-contrast span, .high-contrast div:not(.bg-icon) {
+            color: #000000 !important;
+        }
+
+        .high-contrast .text-indigo-600, .high-contrast .text-indigo-500, .high-contrast .text-indigo-900 {
+            color: #0000ff !important;
+        }
+
+        .high-contrast button {
+            border: 2px solid #000000 !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+        }
+
+        .high-contrast .bg-indigo-600 {
+            background-color: #0000ff !important;
+            color: #ffffff !important;
         }
 
         .font-serif {
@@ -206,6 +251,58 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
+    <!-- Accessibility Menu -->
+    <div id="accessibility-menu" class="hidden fixed inset-0 z-[300] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="toggleAccessibilityMenu()"></div>
+        <div class="glass-card max-w-sm w-full p-8 relative z-10 scale-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-extrabold text-gray-900">Accesibilidad</h3>
+                <button onclick="toggleAccessibilityMenu()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-eye text-indigo-600"></i>
+                        <span class="font-bold text-gray-700">Alto Contraste</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="check-contrast" class="sr-only peer" onchange="toggleHighContrast()">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-font text-indigo-600"></i>
+                        <span class="font-bold text-gray-700">Fuente Amigable</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="check-dyslexic" class="sr-only peer" onchange="toggleDyslexicFont()">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-volume-high text-indigo-600"></i>
+                        <span class="font-bold text-gray-700">Lectura por Voz</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="check-tts" class="sr-only peer" onchange="toggleTTS()">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+            </div>
+
+            <p class="mt-6 text-xs text-gray-400 text-center italic">
+                Estas opciones ayudan a que todas las personas puedan aprender mejor.
+            </p>
+        </div>
+    </div>
+
     <!-- Dynamic Background Layer -->
     <div id="dynamic-bg"></div>
 
@@ -260,6 +357,9 @@
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Experiencia</p>
                         <p class="text-sm font-bold text-indigo-600"><span id="player-xp-display">0</span> XP</p>
                     </div>
+                    <button onclick="toggleAccessibilityMenu()" class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 hover:bg-indigo-100 transition-all" title="Accesibilidad">
+                        <i class="fa-solid fa-universal-access"></i>
+                    </button>
                     <button onclick="logout()" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all" title="Cerrar Sesión">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
@@ -912,6 +1012,11 @@
                 rsi1: false, rsi2: false, rsi3: false, rsi4: false, rsi5: false,
                 rsi6: false, rsi7: false, rsi8: false, rsi9: false, rsi10: ''
             },
+            accessibility: {
+                contrast: false,
+                dyslexic: false,
+                tts: false
+            },
             classificationResults: []
         };
 
@@ -1001,10 +1106,84 @@
             }, 400);
         }
 
+        // --- ACCESSIBILITY FUNCTIONS ---
+        function toggleAccessibilityMenu() {
+            const menu = document.getElementById('accessibility-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleHighContrast() {
+            state.accessibility.contrast = document.getElementById('check-contrast').checked;
+            applyAccessibility();
+            saveState();
+        }
+
+        function toggleDyslexicFont() {
+            state.accessibility.dyslexic = document.getElementById('check-dyslexic').checked;
+            applyAccessibility();
+            saveState();
+        }
+
+        function toggleTTS() {
+            state.accessibility.tts = document.getElementById('check-tts').checked;
+            if (!state.accessibility.tts) {
+                window.speechSynthesis.cancel();
+            } else {
+                speakText("Lectura por voz activada.");
+            }
+            saveState();
+        }
+
+        function applyAccessibility() {
+            // Contrast
+            if (state.accessibility.contrast) {
+                document.documentElement.classList.add('high-contrast');
+            } else {
+                document.documentElement.classList.remove('high-contrast');
+            }
+
+            // Font
+            if (state.accessibility.dyslexic) {
+                document.body.classList.add('font-dyslexic');
+            } else {
+                document.body.classList.remove('font-dyslexic');
+            }
+
+            // Update Checkboxes
+            document.getElementById('check-contrast').checked = state.accessibility.contrast;
+            document.getElementById('check-dyslexic').checked = state.accessibility.dyslexic;
+            document.getElementById('check-tts').checked = state.accessibility.tts;
+        }
+
+        function speakText(text) {
+            if (!state.accessibility.tts) return;
+            
+            // Cancel any ongoing speech
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9; // Slightly slower for clarity
+            window.speechSynthesis.speak(utterance);
+        }
+
         function showView(viewId) {
             const views = ['view-registration', 'view-dashboard', 'view-activities'];
             const currentView = views.find(v => !document.getElementById(v).classList.contains('hidden'));
             
+            const triggerTTS = () => {
+                if (state.accessibility.tts) {
+                    setTimeout(() => {
+                        const targetView = document.getElementById(viewId);
+                        const title = targetView.querySelector('h1, h2')?.innerText || "";
+                        const description = targetView.querySelector('p')?.innerText || "";
+                        if (title || description) {
+                            speakText(`${title}. ${description}`);
+                        }
+                    }, 500);
+                }
+            };
+
             if (currentView) {
                 document.getElementById(currentView).classList.add('fade-out');
                 setTimeout(() => {
@@ -1017,9 +1196,11 @@
                     
                     // Change background randomly
                     document.body.style.background = BACKGROUNDS[Math.floor(Math.random() * BACKGROUNDS.length)];
+                    triggerTTS();
                 }, 400);
             } else {
                 document.getElementById(viewId).classList.remove('hidden');
+                triggerTTS();
             }
         }
 
@@ -1614,6 +1795,7 @@
         // Initialize
         window.onload = () => {
             loadState();
+            applyAccessibility();
             initDynamicBackground();
         };
         async function generatePDF() {
