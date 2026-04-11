@@ -354,7 +354,7 @@
                         <span id="player-level-display">1</span>
                     </div>
                     <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Nivel <span id="level-text">1</span></p>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Avance Total</p>
                         <p class="text-sm font-bold text-gray-800 truncate max-w-[120px] sm:max-w-none" id="player-name-display"></p>
                     </div>
                 </div>
@@ -569,7 +569,7 @@
                         
                         <div class="space-y-4">
                             <div class="flex justify-between text-xs font-bold text-gray-400 uppercase">
-                                <span>Progreso Nivel</span>
+                                <span>Progreso General</span>
                                 <span id="dash-xp-percent">0%</span>
                             </div>
                             <div class="progress-bar-container">
@@ -1354,22 +1354,24 @@
         }
 
         function updateStatsUI() {
-            const currentLevelXP = state.xp % XP_PER_LEVEL;
-            const percent = (currentLevelXP / XP_PER_LEVEL) * 100;
+            // Calculate Total Progress based on 20 activities
+            const pcCompleted = Object.keys(state.activities).filter(k => k.startsWith('pc') && state.activities[k]).length;
+            const rsiCompleted = Object.keys(state.activities).filter(k => k.startsWith('rsi') && state.activities[k]).length;
+            const totalCompleted = pcCompleted + rsiCompleted;
+            const totalPercent = (totalCompleted / 20) * 100;
 
             document.getElementById('player-xp-display').innerText = state.xp;
             document.getElementById('player-level-display').innerText = state.level;
             document.getElementById('level-text').innerText = state.level;
-            document.getElementById('xp-progress-bar').style.width = `${percent}%`;
+            
+            // Main progress bar now reflects total activities (0-20)
+            document.getElementById('xp-progress-bar').style.width = `${totalPercent}%`;
             
             document.getElementById('dash-level').innerText = state.level;
-            document.getElementById('dash-xp-percent').innerText = `${Math.round(percent)}%`;
-            document.getElementById('dash-xp-bar').style.width = `${percent}%`;
+            document.getElementById('dash-xp-percent').innerText = `${Math.round(totalPercent)}%`;
+            document.getElementById('dash-xp-bar').style.width = `${totalPercent}%`;
 
             // Update Mastery UI
-            const pcCompleted = Object.keys(state.activities).filter(k => k.startsWith('pc') && state.activities[k]).length;
-            const rsiCompleted = Object.keys(state.activities).filter(k => k.startsWith('rsi') && state.activities[k]).length;
-            
             const pcPercent = (pcCompleted / 10) * 100;
             const rsiPercent = (rsiCompleted / 10) * 100;
 
