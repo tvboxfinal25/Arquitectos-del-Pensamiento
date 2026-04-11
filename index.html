@@ -1474,7 +1474,7 @@
                 return;
             }
             
-            const itemType = selectedItem.dataset.type;
+            const itemType = selectedItem.getAttribute('data-type');
             const zoneType = zone.id.replace('drop-', '');
             
             if (itemType === zoneType) {
@@ -1494,10 +1494,13 @@
         }
 
         function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-            ev.dataTransfer.setData("type", ev.target.dataset.type);
+            const target = ev.target.closest('.draggable-item');
+            if (!target) return;
+            ev.dataTransfer.setData("text", target.id);
             if (selectedItem) {
-                selectedItem.classList.remove('selected-item');
+                selectedItem.classList.remove('selected-item', 'ring-4', 'ring-indigo-400');
+                const label = selectedItem.querySelector('.selection-label');
+                if (label) label.remove();
                 selectedItem = null;
             }
         }
@@ -1508,10 +1511,12 @@
             zone.classList.remove('drag-over');
             
             const itemId = ev.dataTransfer.getData("text");
-            const itemType = ev.dataTransfer.getData("type");
-            const zoneType = zone.id.replace('drop-', '');
-            
             const item = document.getElementById(itemId);
+            
+            if (!item) return;
+
+            const itemType = item.getAttribute('data-type');
+            const zoneType = zone.id.replace('drop-', '');
             
             if (itemType === zoneType) {
                 processCorrectDrop(zone, item);
